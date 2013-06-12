@@ -14,29 +14,27 @@ namespace War
             var numGamesPlayed = 0;
             var gameRecords = new List<GameRecord>();
 
-            while (numGamesPlayed < 200)
+            while (numGamesPlayed < 20000)
             {
                 gameRecords.Add(PlayGame());
                 numGamesPlayed++;
             }
 
-            WriteToFile(gameRecords, args[0] == null ? @"c:\temp\war.csv" : @"C:\temp\" + args[0] + ".csv" );
+            WriteToFile(gameRecords, args.Length == 0 || args[0] == null ? @"c:\war\war-NoShuffle.csv" : @"C:\temp\" + args[0] + ".csv" );
 
+            Console.WriteLine("Games Played: " + gameRecords.Count);
             Console.ReadLine();
         }
 
         private static void WriteToFile(IEnumerable<GameRecord> gameRecords, string fileName)
         {
             var builder = new StringBuilder();
-            builder.Append("Winner,NumTricks,NAcesP1,NAcesP2");
-            //implementez vous
+            builder.Append("Winner,NumTricks,NAcesP1,NAcesP2,NShuffles,ArtificiallyEnded");
+            
             foreach (var gameRecord in gameRecords)
             {
                 builder.Append(Environment.NewLine + string.Format("{0},{1},{2},{3},{4},{5}", gameRecord.Winner, gameRecord.NumTricks, gameRecord.NumAcesPlayer1,
                                   gameRecord.NumAcesPlayer2, gameRecord.NumShuffles, gameRecord.ArtificiallyBroken));
-                Console.WriteLine("Winner {0}, NTricks {1}, Player 1 Aces: {2}, Player 2 Aces: {3}, NShuffles: {4}, Ended: {5}",
-                                  gameRecord.Winner, gameRecord.NumTricks, gameRecord.NumAcesPlayer1,
-                                  gameRecord.NumAcesPlayer2, gameRecord.NumShuffles, gameRecord.ArtificiallyBroken);
             }
 
             File.WriteAllText(fileName, builder.ToString());
@@ -56,12 +54,12 @@ namespace War
             {
                 gameEngine.PlayTrick(playerOne, playerTwo);
                 gameRecord.NumTricks++;
-                if (gameRecord.NumTricks % 25000 == 0) 
-                {
-                    playerOne.Shuffle();
-                    gameRecord.NumShuffles++;
-                }
-                if (gameRecord.NumTricks > 10000000)
+                //if (gameRecord.NumTricks % 25000 == 0) 
+                //{
+                //    playerOne.Shuffle();
+                //    gameRecord.NumShuffles++;
+                //}
+                if (gameRecord.NumTricks > 100000)
                 {
                     gameRecord.ArtificiallyBroken = true;
                     break;
